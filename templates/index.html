@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Poultry Order</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script>
+    async function submitOrder(event) {
+      event.preventDefault();
+      const l = parseInt(document.getElementById('l').value);
+      const w = parseInt(document.getElementById('w').value);
+      const f = parseInt(document.getElementById('f').value);
+
+      const response = await fetch("/process_order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ l, w, f })
+      });
+
+      const data = await response.json();
+
+      document.getElementById("results").innerHTML = `
+        <h3>Order Result</h3>
+        <p><strong>Order Weight:</strong> ${data.order_weight} kg</p>
+        <p><strong>Chickens Needed:</strong> ${data.chickens_needed}</p>
+        <p><strong>Remaining:</strong></p>
+        <ul>
+          <li>Legs: ${data.remaining.l}</li>
+          <li>Wings: ${data.remaining.w}</li>
+          <li>Flesh: ${data.remaining.f}</li>
+        </ul>
+        <p><strong>Remaining Weight:</strong> ${data.remaining_weight} kg</p>
+      `;
+    }
+  </script>
+</head>
+<body>
+  <h2>Poultry Order Form</h2>
+  <form onsubmit="submitOrder(event)">
+    <label>Legs: <input type="number" id="l" min="0" required></label><br>
+    <label>Wings: <input type="number" id="w" min="0" required></label><br>
+    <label>Flesh: <input type="number" id="f" min="0" required></label><br>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="results"></div>
+</body>
+</html>
